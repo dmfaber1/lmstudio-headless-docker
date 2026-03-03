@@ -12,9 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN curl -fsSL https://lmstudio.ai/install.sh | bash
 
+ENV PATH="/root/.local/bin:/root/.lmstudio/bin:/opt/lmstudio/bin:${PATH}"
+
 EXPOSE 1234
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["lms", "server", "start", "--port", "1234"]
