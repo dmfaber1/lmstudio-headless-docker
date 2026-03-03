@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     bash \
+    jq \
     libstdc++6 \
     libgcc-s1 \
   && rm -rf /var/lib/apt/lists/*
@@ -14,6 +15,11 @@ RUN curl -fsSL https://lmstudio.ai/install.sh | bash
 
 ENV PATH="/root/.local/bin:/root/.lmstudio/bin:/opt/lmstudio/bin:${PATH}"
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+VOLUME /mnt/models
+
 EXPOSE 1234
 
-CMD ["sh", "-c", "lms server start --port 1234 && exec tail -f /dev/null"]
+CMD ["/entrypoint.sh"]
