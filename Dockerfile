@@ -16,4 +16,4 @@ ENV PATH="/root/.local/bin:/root/.lmstudio/bin:/opt/lmstudio/bin:${PATH}"
 
 EXPOSE 1234
 
-CMD ["lms", "server", "start", "--port", "1234"]
+CMD ["sh", "-c", "lms server start --port 1234 && exec tail -f /dev/null"]
