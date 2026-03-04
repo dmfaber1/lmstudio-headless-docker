@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \ 
     libstdc++6 \ 
     libgcc-s1 \ 
+    libgomp1 \ 
   && rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://lmstudio.ai/install.sh | bash
