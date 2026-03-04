@@ -34,6 +34,10 @@ ENV PATH="/root/.local/bin:/root/.lmstudio/bin:/opt/lmstudio/bin:${PATH}"
 RUN mkdir -p /root/.lmstudio && \ 
     echo '{"downloadsFolder": "/mnt/models"}' > /root/.lmstudio/settings.json
 
+# Create render and video groups so --group-add render/video works at runtime.
+# Use --force so the command succeeds even if either group already exists.
+RUN groupadd --force -r render && groupadd --force -r video
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
