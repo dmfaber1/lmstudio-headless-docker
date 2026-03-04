@@ -8,6 +8,8 @@ curl -fsSL https://lmstudio.ai/install.sh | bash
 
 and starts the headless server on `0.0.0.0:1234`.
 
+The image is based on **Ubuntu 24.04** and includes the Intel oneAPI Level Zero and OpenCL runtimes for Intel Arc GPU support.
+
 ## Build
 
 ```bash
@@ -20,19 +22,19 @@ docker build -t lmstudio-headless:latest .
 docker run --rm -it -p 1234:1234 lmstudio-headless:latest
 ```
 
-## Run with NVIDIA GPU (recommended on Linux)
-
-Requires:
-- NVIDIA drivers installed on the host
-- `nvidia-container-toolkit` installed
-- Docker configured with the `nvidia` runtime
+## Run with Intel Arc GPU
 
 ```bash
 docker run --rm -it \
-  --gpus all \
+  --device /dev/dri \
+  --group-add render \
   -p 1234:1234 \
   lmstudio-headless:latest
 ```
+
+- `--device /dev/dri` passes the Intel GPU DRI nodes (including `renderD128`) into the container
+- `--group-add render` grants permissions to use those device nodes
+- The Intel oneAPI Level Zero and OpenCL runtimes are baked into the image
 
 ## Notes / troubleshooting
 
@@ -42,3 +44,12 @@ Open a shell and locate the binary:
 ```bash
 docker run --rm -it lmstudio-headless:latest bash
 ```
+
+To verify the Intel GPU is visible inside the container, run:
+
+```bash
+docker run --rm -it --device /dev/dri --group-add render lmstudio-headless:latest \
+  bash -c "apt-get install -y --no-install-recommends clinfo > /dev/null 2>&1 && clinfo | grep -i 'device name'"
+```
+
+The output should include `Intel(R) Arc(TM) A750 Graphics`.
