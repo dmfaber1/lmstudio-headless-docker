@@ -22,6 +22,12 @@ for dev_node in /dev/dri/renderD128 /dev/dri/card0; do
     usermod -aG "$GROUP_NAME" root 2>/dev/null || true
 done
 
+# Re-exec with updated groups so lms inherits render/video GIDs
+if [ -z "$GROUPS_REFRESHED" ]; then
+    export GROUPS_REFRESHED=1
+    exec su -s /bin/bash root "$0" "$@"
+fi
+
 SETTINGS=/root/.lmstudio/settings.json
 
 if [ -f "$SETTINGS" ]; then
