@@ -28,12 +28,15 @@ docker run --rm -it -p 1234:1234 lmstudio-headless:latest
 docker run --rm -it \
   --device /dev/dri \
   --group-add render \
+  --group-add video \
   -p 1234:1234 \
   lmstudio-headless:latest
 ```
 
-- `--device /dev/dri` passes the Intel GPU DRI nodes (including `renderD128`) into the container
-- `--group-add render` grants permissions to use those device nodes
+- `--device /dev/dri` passes the Intel GPU DRI nodes (`card0` and `renderD128`) into the container
+- `--group-add render` grants access to `renderD128` (needed by Level Zero / OpenCL runtimes)
+- `--group-add video` grants access to `card0` (required by some Intel GPU driver paths)
+- The entrypoint automatically remaps the `render` and `video` group GIDs inside the container to match the host device GIDs, preventing silent permission failures when the host and container GIDs differ
 - The Intel oneAPI Level Zero and OpenCL runtimes are baked into the image
 
 ## Notes / troubleshooting
@@ -48,7 +51,7 @@ docker run --rm -it lmstudio-headless:latest bash
 To verify the Intel GPU is visible inside the container, run:
 
 ```bash
-docker run --rm -it --device /dev/dri --group-add render lmstudio-headless:latest \
+docker run --rm -it --device /dev/dri --group-add render --group-add video lmstudio-headless:latest \
   bash -c "apt-get install -y --no-install-recommends clinfo > /dev/null 2>&1 && clinfo | grep -i 'device name'"
 ```
 
