@@ -4,6 +4,24 @@ set -e
 mkdir -p /mnt/models
 mkdir -p /root/.lmstudio
 
+# Remap render/video group GIDs to match the host device GIDs so that
+# GPU device nodes passed in via --device /dev/dri are accessible.
+for dev_node in /dev/dri/renderD128 /dev/dri/card0; do
+    [ -e "$dev_node" ] || continue
+    DEV_GID=$(stat -c '%g' "$dev_node")
+    case "$dev_node" in
+        */renderD128) GROUP_NAME=render ;;
+        */card0)      GROUP_NAME=video  ;;
+        *)            continue ;;
+    esac
+    if getent group "$GROUP_NAME" > /dev/null 2>&1; then
+        groupmod -g "$DEV_GID" "$GROUP_NAME" 2>/dev/null || true
+    else
+        groupadd -g "$DEV_GID" "$GROUP_NAME" 2>/dev/null || true
+    fi
+    usermod -aG "$GROUP_NAME" root 2>/dev/null || true
+done
+
 SETTINGS=/root/.lmstudio/settings.json
 
 if [ -f "$SETTINGS" ]; then
