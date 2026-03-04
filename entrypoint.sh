@@ -25,7 +25,7 @@ done
 # Re-exec with updated groups so lms inherits render/video GIDs
 if [ -z "$GROUPS_REFRESHED" ]; then
     export GROUPS_REFRESHED=1
-    exec su -s /bin/bash root "$0" "$@"
+    exec su -s /bin/bash root -c "PATH=$PATH exec $0 $*"
 fi
 
 SETTINGS=/root/.lmstudio/settings.json
