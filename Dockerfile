@@ -21,7 +21,6 @@ RUN wget -qO - https://repositories.intel.com/gpu/intel-graphics.key \
     > /etc/apt/sources.list.d/intel-gpu-noble.list \
   && apt-get update && apt-get install -y --no-install-recommends \
     intel-opencl-icd \
-    intel-level-zero-gpu \
     libze-intel-gpu1 \
     libze1 \
     intel-gsc \
