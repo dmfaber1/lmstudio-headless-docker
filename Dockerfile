@@ -24,6 +24,8 @@ RUN wget -qO - https://repositories.intel.com/gpu/intel-graphics.key \
     libze-intel-gpu1 \
     libze1 \
     intel-gsc \
+  && echo "/usr/lib/x86_64-linux-gnu/intel-opencl" > /etc/ld.so.conf.d/intel-opencl.conf \
+  && ldconfig \
   && rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://lmstudio.ai/install.sh | bash
